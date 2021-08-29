@@ -16,5 +16,8 @@
     "immutable": "^4.0.0-rc.12",
     "node-fetch": "^2.6.0",
     "yarn": "^1.22.10"
+  },
+  "devDependencies": {
+    "webpack": "^5.51.1"
   }
 }
