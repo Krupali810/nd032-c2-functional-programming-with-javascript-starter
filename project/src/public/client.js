@@ -34,7 +34,7 @@ const App = ({ rovers, roverInfo, selectedRover }) =>
                 <h2>Viewing ${store.selectedRover.toUpperCase()} Rover Photos</h2>
               </div>
               <div class="container">
-              ${roverInformation(selectedRover, roverInfo)}
+                ${roverInformation(selectedRover)}
               </div>
           </div>
       `;
@@ -90,7 +90,7 @@ function selectRover(roverName) {
   updateStore(store, { selectedRover: roverName.toLowerCase() });
 }
 
-const roverInformation = (rover, roverInfo) => {
+const roverInformation = (rover) => {
   const isRoverInfoPresent = Object.keys(store.roverInfoMap).find(
     (key) => key === store.selectedRover
   );
@@ -101,30 +101,34 @@ const roverInformation = (rover, roverInfo) => {
     const roverDataArray =
       store.roverInfoMap[rover]["roverPhotoReponse"]["latest_photos"];
     if (roverDataArray) {
-      const roverPhotoArray = roverDataArray.map((val) => val["img_src"]);
-      return displayRoverPhotoGrid(roverPhotoArray, roverDataArray);
+      return displayRoverPhotoGrid(roverDataArray);
     }
   }
   return `<div/>`;
 };
 
 const createCard = (roverData) => {
-  console.log(`roverData data `, roverData);
-  console.log(`roverData val data`, roverData["img_src"]);
   return `
-      <div class="card col-sm" style="width: 30%;">
-        <img class="card-img-top" src=${roverData["img_src"]} height="350px" width="30%"/>
-        <span>
-        <div class="card-body">
-          <h5>Status: ${roverData["rover"]["status"]}</h5>
-          <h6>Landing Date: ${roverData["rover"]["landing_date"]}</h6>
-          <h6>Launching Date: ${roverData["rover"]["launch_date"]}</h6>
+      <div class="card col-sm" style="width: 100%;  border: 3px solid gray">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm">
+              <img class="card-img-top" src=${roverData["img_src"]} height="350px"/>
+            </div>
+            <div class="col-sm" style="  margin: 0; position: relative; top: 50%; ">
+              <span class="card-body">
+                <h5>Status: ${roverData["rover"]["status"]}</h5>
+                <h6>Landing Date: ${roverData["rover"]["landing_date"]}</h6>
+                <h6>Launching Date: ${roverData["rover"]["launch_date"]}</h6>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
    `;
 };
 
-const displayRoverPhotoGrid = (photosArray, roverDataArray) => {
+const displayRoverPhotoGrid = (roverDataArray) => {
   const divForPhotosArray = roverDataArray.map((val) => createCard(val));
   return divForPhotosArray;
 };
