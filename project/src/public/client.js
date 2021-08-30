@@ -21,24 +21,22 @@ const render = async (root, state) => {
 // create content
 const App = ({ rovers, roverInfo, selectedRover }) =>
   `
-          <header></header>
-          <main>
-            <div style={{alignContent:"center"}}>
-              ${Greeting(store.user.name)}
+          <div>
+          <div style="width:100%; text-align: center; margin:0 auto;">
+          ${Greeting(store.user.name)}
             </div>
-              <div style="width:100%; margin:0 auto;">
+              <div style="width:100%; text-align: center; margin:0 auto;">
                 <nav>
                   ${roverNavTabs(rovers)}
                 </nav>
               </div>
-              <section>
-                <h1>Viewing ${store.selectedRover.toUpperCase()} Rover Photos</h1>
-              </section>
-              <section>
-                  ${roverInformation(selectedRover, roverInfo)}
-              </section>
-          </main>
-          <footer></footer>
+              <div style="width:100%; text-align: center; margin:0 auto;">
+                <h2>Viewing ${store.selectedRover.toUpperCase()} Rover Photos</h2>
+              </div>
+              <div class="container">
+              ${roverInformation(selectedRover, roverInfo)}
+              </div>
+          </div>
       `;
 
 // listening for load event because page should load before any JS is called
@@ -49,16 +47,15 @@ window.addEventListener("load", () => {
 const Greeting = (name) => {
   if (name) {
     return `
-              <h1>Welcome, ${name}!</h1>
+              <h2>Welcome ${name}!</h2>
           `;
   }
   return `
-          <h1>Hello!</h1>
+          <h2>Hello!</h2>
       `;
 };
 
 const roverNavTabs = (rovers) => {
-  console.log(`rovers`, rovers.toJS());
   return rovers.toJS().map((roverName) => createLinks(roverName));
 };
 
@@ -94,7 +91,6 @@ function selectRover(roverName) {
 }
 
 const roverInformation = (rover, roverInfo) => {
-  console.log(`rover store info`, store.roverInfoMap);
   const isRoverInfoPresent = Object.keys(store.roverInfoMap).find(
     (key) => key === store.selectedRover
   );
@@ -103,24 +99,33 @@ const roverInformation = (rover, roverInfo) => {
   }
   if (store.roverInfoMap && store.roverInfoMap[rover]) {
     const roverDataArray =
-      store.roverInfoMap[rover]["roverPhotoReponse"]["photos"];
+      store.roverInfoMap[rover]["roverPhotoReponse"]["latest_photos"];
     if (roverDataArray) {
       const roverPhotoArray = roverDataArray.map((val) => val["img_src"]);
-      return displayRoverPhotoGrid(roverPhotoArray);
+      return displayRoverPhotoGrid(roverPhotoArray, roverDataArray);
     }
   }
   return `<div/>`;
 };
 
-const createImage = (imgSrc) => {
+const createCard = (roverData) => {
+  console.log(`roverData data `, roverData);
+  console.log(`roverData val data`, roverData["img_src"]);
   return `
-    <img src=${imgSrc} height="350px" width="30%"/>
- `;
+      <div class="card col-sm" style="width: 30%;">
+        <img class="card-img-top" src=${roverData["img_src"]} height="350px" width="30%"/>
+        <span>
+        <div class="card-body">
+          <h5>Status: ${roverData["rover"]["status"]}</h5>
+          <h6>Landing Date: ${roverData["rover"]["landing_date"]}</h6>
+          <h6>Launching Date: ${roverData["rover"]["launch_date"]}</h6>
+        </div>
+      </div>
+   `;
 };
 
-const displayRoverPhotoGrid = (photosArray) => {
-  const divForPhotosArray = photosArray.map((val) => createImage(val));
-
+const displayRoverPhotoGrid = (photosArray, roverDataArray) => {
+  const divForPhotosArray = roverDataArray.map((val) => createCard(val));
   return divForPhotosArray;
 };
 
@@ -132,7 +137,6 @@ const getDataFromAPI = (url) => {
     fetch(`http://localhost:3000/${url}/${roverName}`)
       .then((res) => res.json())
       .then((roverInfo) => {
-        console.log(`roverInfo is`, roverInfo);
         updateStore(store, {
           roverInfoMap: {
             ...store.roverInfoMap,
