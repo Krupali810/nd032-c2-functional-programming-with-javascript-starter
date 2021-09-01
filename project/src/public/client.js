@@ -108,6 +108,7 @@ const roverInformation = (rover) => {
 };
 
 const createCard = (roverData) => {
+  console.log(`rover data`, roverData);
   return `
       <div class="card col-sm" style="width: 100%;  border: 3px solid gray">
         <div class="container">
@@ -118,6 +119,7 @@ const createCard = (roverData) => {
             <div class="col-sm" style="  margin: 0; position: relative; top: 50%; ">
               <span class="card-body">
                 <h5>Status: ${roverData["rover"]["status"]}</h5>
+                <h6>Date photo was captured: ${roverData["earth_date"]}</h6>
                 <h6>Landing Date: ${roverData["rover"]["landing_date"]}</h6>
                 <h6>Launching Date: ${roverData["rover"]["launch_date"]}</h6>
               </span>
