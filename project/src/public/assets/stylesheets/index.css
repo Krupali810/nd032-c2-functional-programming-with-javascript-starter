@@ -20,6 +20,12 @@ footer {
   /* footer styles */
 }
 
+.appOuterDivTextStyle {
+  width: 100%;
+  text-align: center;
+  margin: 0 auto;
+}
+
 /* -------------------  TABLET  --------------------- */
 @media (min-width: 768px) {
   /* use mobile */

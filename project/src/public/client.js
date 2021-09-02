@@ -1,10 +1,10 @@
-let store = {
+const store = Immutable.Map({
   user: { name: "User" },
   roverInfo: "",
   roverInfoMap: {},
   rovers: Immutable.List(["Curiosity", "Opportunity", "Spirit"]),
   selectedRover: "Curiosity".toLowerCase(),
-};
+});
 
 // add our markup to the page
 const root = document.getElementById("root");
@@ -19,7 +19,7 @@ const render = async (root, state) => {
 };
 
 // create content
-const App = ({ rovers, roverInfo, selectedRover }) =>
+const App = ({ rovers, selectedRover }) =>
   `
           <div>
           <div style="width:100%; text-align: center; margin:0 auto;">
@@ -108,7 +108,6 @@ const roverInformation = (rover) => {
 };
 
 const createCard = (roverData) => {
-  console.log(`rover data`, roverData);
   return `
       <div class="card col-sm" style="width: 100%;  border: 3px solid gray">
         <div class="container">
@@ -138,7 +137,7 @@ const displayRoverPhotoGrid = (roverDataArray) => {
 const test = () => {};
 
 const getDataFromAPI = (url) => {
-  let roverName = store.selectedRover;
+  const roverName = store.selectedRover;
   if (url === "roverImageInfo") {
     fetch(`http://localhost:3000/${url}/${roverName}`)
       .then((res) => res.json())
