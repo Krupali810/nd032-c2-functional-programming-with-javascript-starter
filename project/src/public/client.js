@@ -1,10 +1,10 @@
-const store = Immutable.Map({
+const store = {
   user: { name: "User" },
   roverInfo: "",
   roverInfoMap: {},
   rovers: Immutable.List(["Curiosity", "Opportunity", "Spirit"]),
   selectedRover: "Curiosity".toLowerCase(),
-});
+};
 
 // add our markup to the page
 const root = document.getElementById("root");
