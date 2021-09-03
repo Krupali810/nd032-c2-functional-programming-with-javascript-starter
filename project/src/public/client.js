@@ -97,14 +97,28 @@ const roverInformation = (rover) => {
   if (!isRoverInfoPresent) {
     getDataFromAPI("roverImageInfo");
   }
+  return displayRoverPhotoGrid(roverDataArrayInformation(rover));
+};
+
+const roverDataArrayInformation = (rover) => {
   if (store.roverInfoMap && store.roverInfoMap[rover]) {
     const roverDataArray =
       store.roverInfoMap[rover]["roverPhotoReponse"]["latest_photos"];
     if (roverDataArray) {
-      return displayRoverPhotoGrid(roverDataArray);
+      return roverDataArray;
     }
+    return [];
   }
-  return `<div/>`;
+  return [];
+};
+
+const displayRoverPhotoGrid = (roverDataArray) => {
+  if (roverDataArray.length > 0) {
+    const divForPhotosArray = roverDataArray.map((val) => createCard(val));
+    return divForPhotosArray;
+  } else {
+    return `<div/>`;
+  }
 };
 
 const createCard = (roverData) => {
@@ -128,13 +142,6 @@ const createCard = (roverData) => {
       </div>
    `;
 };
-
-const displayRoverPhotoGrid = (roverDataArray) => {
-  const divForPhotosArray = roverDataArray.map((val) => createCard(val));
-  return divForPhotosArray;
-};
-
-const test = () => {};
 
 const getDataFromAPI = (url) => {
   const roverName = store.selectedRover;
