@@ -23,7 +23,7 @@ const App = ({ rovers, selectedRover }) =>
   `
           <div>
           <div style="width:100%; text-align: center; margin:0 auto;">
-          ${Greeting(store.user.name)}
+          ${Greeting(fetchGreetingText())}
             </div>
               <div style="width:100%; text-align: center; margin:0 auto;">
                 <nav>
@@ -44,16 +44,16 @@ window.addEventListener("load", () => {
   render(root, store);
 });
 
-const Greeting = (name) => {
-  if (name) {
-    return `
-              <h2>Welcome ${name}!</h2>
-          `;
-  }
-  return `
-          <h2>Hello!</h2>
-      `;
+const Greeting = (fetchGreetingText) => {
+  return `<h3>${fetchGreetingText}</h3>`;
 };
+
+function fetchGreetingText() {
+  if (store.user.name) {
+    return "Hello! " + store.user.name;
+  }
+  return "Hello!";
+}
 
 const roverNavTabs = (rovers) => {
   return rovers.toJS().map((roverName) => createLinks(roverName));
