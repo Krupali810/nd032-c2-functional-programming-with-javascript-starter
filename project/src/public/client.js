@@ -6,31 +6,12 @@ let store = Immutable.Map({
   selectedRover: "Curiosity".toLowerCase(),
 });
 
-// // store's initial state
-
-// let store = Map({});
-
-// // function to update the store if there is a new data
-
-// function updateStore(key, value) {
-//   if (key && !value) {
-//     return store.toJS()[key];
-//   }
-//   const newStore = store.setIn([key], fromJS(value));
-//   if (!newStore.equals(store)) {
-//     store = newStore;
-//   }
-//   return store.toJS()[key];
-// }
-
-// add our markup to the page
 const root = document.getElementById("root");
 
 const render = async (root, store) => {
   root.innerHTML = App(store);
 };
 
-// create content
 const App = (store) =>
   `
           <div>
@@ -53,7 +34,6 @@ const App = (store) =>
           </div>
       `;
 
-// listening for load event because page should load before any JS is called
 window.addEventListener("load", () => {
   render(root, store);
 });
@@ -63,7 +43,6 @@ const Greeting = (fetchGreetingText) => {
 };
 
 function fetchGreetingText() {
-  console.log("name", store.toJS().user.name);
   if (store.toJS().user.name) {
     return "Hello! " + store.toJS().user.name;
   }
@@ -128,10 +107,8 @@ const roverDataArrayInformation = (rover) => {
 };
 
 const displayRoverPhotoGrid = (roverDataArray) => {
-  console.log(`roverDataArray`, roverDataArray);
   if (roverDataArray.length > 0) {
     const divForPhotosArray = roverDataArray.map((val) => {
-      console.log(`itr val`, val);
       return createCard(val);
     });
     return divForPhotosArray;
@@ -166,37 +143,15 @@ const updateStore = (key, value) => {
   if (key && !value) {
     throw new Error("Cannot update empty value");
   }
-  // const newStore = store.set(key, value);
-
   let newStore = store.set(key, value);
   if (!newStore.equals(store)) {
     store = newStore;
   }
-
-  // store.set(key, value);
-  console.log(`after`, { store: JSON.stringify(newStore.toJS().roverInfoMap) });
-
-  // return store.toJS()[key];
-  //store = Object.assign(store, newState);
   render(root, store);
 };
 
-// {
-//   roverInfoMap: {
-//     opp: {
-//       somekey1: someValue1,
-//       somekey2: someValue2;
-//     },
-//     curiosity: {
-//       somekey1: someValue1,
-//       somekey2: someValue2;
-//     }
-//   }
-// }
-
 const getDataFromAPI = (url) => {
   const roverName = store.toJS().selectedRover;
-  console.log(`roverName`, roverName);
   if (url === "roverImageInfo") {
     fetch(`http://localhost:3000/${url}/${roverName}`)
       .then((res) => res.json())
