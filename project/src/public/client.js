@@ -1,25 +1,37 @@
-const store = {
+let store = Immutable.Map({
   user: { name: "User" },
   roverInfo: "",
   roverInfoMap: {},
-  rovers: Immutable.List(["Curiosity", "Opportunity", "Spirit"]),
+  rovers: ["Curiosity", "Opportunity", "Spirit"],
   selectedRover: "Curiosity".toLowerCase(),
-};
+});
+
+// // store's initial state
+
+// let store = Map({});
+
+// // function to update the store if there is a new data
+
+// function updateStore(key, value) {
+//   if (key && !value) {
+//     return store.toJS()[key];
+//   }
+//   const newStore = store.setIn([key], fromJS(value));
+//   if (!newStore.equals(store)) {
+//     store = newStore;
+//   }
+//   return store.toJS()[key];
+// }
 
 // add our markup to the page
 const root = document.getElementById("root");
 
-const updateStore = (store, newState) => {
-  store = Object.assign(store, newState);
-  render(root, store);
-};
-
-const render = async (root, state) => {
-  root.innerHTML = App(state);
+const render = async (root, store) => {
+  root.innerHTML = App(store);
 };
 
 // create content
-const App = ({ rovers, selectedRover }) =>
+const App = (store) =>
   `
           <div>
           <div style="width:100%; text-align: center; margin:0 auto;">
@@ -27,14 +39,16 @@ const App = ({ rovers, selectedRover }) =>
             </div>
               <div style="width:100%; text-align: center; margin:0 auto;">
                 <nav>
-                  ${roverNavTabs(rovers)}
+                  ${roverNavTabs(store.toJS().rovers)}
                 </nav>
               </div>
               <div style="width:100%; text-align: center; margin:0 auto;">
-                <h2>Viewing ${store.selectedRover.toUpperCase()} Rover Photos</h2>
+                <h2>Viewing ${store
+                  .toJS()
+                  .selectedRover.toUpperCase()} Rover Photos</h2>
               </div>
               <div class="container">
-                ${roverInformation(selectedRover)}
+                ${roverInformation(store.toJS().selectedRover)}
               </div>
           </div>
       `;
@@ -49,14 +63,15 @@ const Greeting = (fetchGreetingText) => {
 };
 
 function fetchGreetingText() {
-  if (store.user.name) {
-    return "Hello! " + store.user.name;
+  console.log("name", store.toJS().user.name);
+  if (store.toJS().user.name) {
+    return "Hello! " + store.toJS().user.name;
   }
   return "Hello!";
 }
 
 const roverNavTabs = (rovers) => {
-  return rovers.toJS().map((roverName) => createLinks(roverName));
+  return rovers.map((roverName) => createLinks(roverName));
 };
 
 const createLinks = (roverName) => {
@@ -87,12 +102,12 @@ const createButton = (roverName) => {
 };
 
 function selectRover(roverName) {
-  updateStore(store, { selectedRover: roverName.toLowerCase() });
+  updateStore("selectedRover", roverName.toLowerCase());
 }
 
 const roverInformation = (rover) => {
-  const isRoverInfoPresent = Object.keys(store.roverInfoMap).find(
-    (key) => key === store.selectedRover
+  const isRoverInfoPresent = Object.keys(store.toJS().roverInfoMap).find(
+    (key) => key === store.toJS().selectedRover
   );
   if (!isRoverInfoPresent) {
     getDataFromAPI("roverImageInfo");
@@ -101,9 +116,9 @@ const roverInformation = (rover) => {
 };
 
 const roverDataArrayInformation = (rover) => {
-  if (store.roverInfoMap && store.roverInfoMap[rover]) {
+  if (store.toJS().roverInfoMap && store.toJS().roverInfoMap[rover]) {
     const roverDataArray =
-      store.roverInfoMap[rover]["roverPhotoReponse"]["latest_photos"];
+      store.toJS().roverInfoMap[rover]["roverPhotoReponse"]["latest_photos"];
     if (roverDataArray) {
       return roverDataArray;
     }
@@ -113,8 +128,12 @@ const roverDataArrayInformation = (rover) => {
 };
 
 const displayRoverPhotoGrid = (roverDataArray) => {
+  console.log(`roverDataArray`, roverDataArray);
   if (roverDataArray.length > 0) {
-    const divForPhotosArray = roverDataArray.map((val) => createCard(val));
+    const divForPhotosArray = roverDataArray.map((val) => {
+      console.log(`itr val`, val);
+      return createCard(val);
+    });
     return divForPhotosArray;
   } else {
     return `<div/>`;
@@ -143,18 +162,50 @@ const createCard = (roverData) => {
    `;
 };
 
+const updateStore = (key, value) => {
+  if (key && !value) {
+    throw new Error("Cannot update empty value");
+  }
+  // const newStore = store.set(key, value);
+
+  let newStore = store.set(key, value);
+  if (!newStore.equals(store)) {
+    store = newStore;
+  }
+
+  // store.set(key, value);
+  console.log(`after`, { store: JSON.stringify(newStore.toJS().roverInfoMap) });
+
+  // return store.toJS()[key];
+  //store = Object.assign(store, newState);
+  render(root, store);
+};
+
+// {
+//   roverInfoMap: {
+//     opp: {
+//       somekey1: someValue1,
+//       somekey2: someValue2;
+//     },
+//     curiosity: {
+//       somekey1: someValue1,
+//       somekey2: someValue2;
+//     }
+//   }
+// }
+
 const getDataFromAPI = (url) => {
-  const roverName = store.selectedRover;
+  const roverName = store.toJS().selectedRover;
+  console.log(`roverName`, roverName);
   if (url === "roverImageInfo") {
     fetch(`http://localhost:3000/${url}/${roverName}`)
       .then((res) => res.json())
       .then((roverInfo) => {
-        updateStore(store, {
-          roverInfoMap: {
-            ...store.roverInfoMap,
-            [`${roverName}`]: roverInfo,
-          },
-        });
+        const newValueToSet = {
+          ...store.get("roverInfoMap"),
+          [`${roverName}`]: roverInfo,
+        };
+        updateStore("roverInfoMap", newValueToSet);
       })
       .catch((err) => console.log(err));
   }

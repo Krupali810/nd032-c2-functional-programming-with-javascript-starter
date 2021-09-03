@@ -26,6 +26,12 @@ footer {
   margin: 0 auto;
 }
 
+#root {
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
 /* -------------------  TABLET  --------------------- */
 @media (min-width: 768px) {
   /* use mobile */
