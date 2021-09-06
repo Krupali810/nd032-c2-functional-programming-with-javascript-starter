@@ -128,7 +128,7 @@ const createCard = (roverData) => {
             <div class="col-sm" style="  margin: 0; position: relative; top: 50%; ">
               <span class="card-body">
                 <h5>Status: ${roverData["rover"]["status"]}</h5>
-                <h6>Date photo was captured: ${roverData["earth_date"]}</h6>
+                <h6>Date the most recent photos were taken: ${roverData["earth_date"]}</h6>
                 <h6>Landing Date: ${roverData["rover"]["landing_date"]}</h6>
                 <h6>Launching Date: ${roverData["rover"]["launch_date"]}</h6>
               </span>
@@ -160,6 +160,7 @@ const getDataFromAPI = (url) => {
           ...store.get("roverInfoMap"),
           [`${roverName}`]: roverInfo,
         };
+        console.log(`roverInfo from API`, roverInfo);
         updateStore("roverInfoMap", newValueToSet);
       })
       .catch((err) => console.log(err));
